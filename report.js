@@ -4,7 +4,8 @@ require('dotenv').config(); //require install dotenv package
 newman.run({
     // past collection url 
     collection:`https://api.postman.com/collections/52498897-2a596169-603f-43d2-b980-f74c235385b6?access_key=${process.env.secretKey}`,
-      // Environment file
+      //if collection runner no need to add column enviornement
+    // Environment file
     environment: './EnvTestEmployee.postman_environment.json',
     reporters: 'htmlextra',
     iterationCount: 1,
