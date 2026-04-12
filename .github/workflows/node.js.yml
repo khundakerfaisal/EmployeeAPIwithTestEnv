@@ -1,0 +1,48 @@
+name: Node.js CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      # starting api automation with newman report generation
+      - name: Install Newman & HTML Reporter
+        run: |
+          npm install -g newman
+          npm install -g newman-reporter-htmlextra
+
+      - name: Run Tests and Generate HTML Report
+        env:
+          POSTMAN_API_KEY: ${{ secrets.POSTMAN_API_KEY }}
+        run: |
+          npx newman run "https://api.postman.com/collections/52498897-2a596169-603f-43d2-b980-f74c235385b6?access_key=${POSTMAN_API_KEY}" \
+          -e EnvTestEmployee.postman_environment.json \
+          -r cli,htmlextra \
+          --reporter-htmlextra-export newman-report.html
+
+          node ./report.js
+
+      - name: Upload Test Report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: newman-html-report
+          path: newman-report.html
