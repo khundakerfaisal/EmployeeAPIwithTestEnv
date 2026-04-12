@@ -1,9 +1,15 @@
 const newman = require('newman');
-require('dotenv').config(); //require install dotenv package
+//If implement ci cd comment out the dot env required file
+// require('dotenv').config(); //require install dotenv package 
+
  
 newman.run({
+        collection: {
+        url: "https://api.postman.com/collections/52498897-2a596169-603f-43d2-b980-f74c235385b6"
+    },
     // past collection url 
-    collection:`https://api.postman.com/collections/52498897-2a596169-603f-43d2-b980-f74c235385b6?access_key=${process.env.secretKey}`,
+    //If implement ci cd comment out the collection env file
+    // collection:`https://api.postman.com/collections/52498897-2a596169-603f-43d2-b980-f74c235385b6?access_key=${process.env.secretKey}`,
       //if collection runner no need to add column enviornement
     // Environment file
     environment: './EnvTestEmployee.postman_environment.json',
@@ -15,6 +21,10 @@ newman.run({
         }
     }
 }, function (err) {
-    if (err) { throw err; }
+    if (err) { 
+        // throw err; 
+        console.error("Newman run failed:", err);
+        process.exit(1);
+    }
     console.log('collection run complete!');
 });
