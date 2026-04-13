@@ -1,30 +1,39 @@
 const newman = require('newman');
-//If implement ci cd comment out the dot env required file
-// require('dotenv').config(); //require install dotenv package 
 
- 
+const apiKey = process.env.POSTMAN_API_KEY;
+
+if (!apiKey) {
+    console.error("POSTMAN_API_KEY is missing");
+    process.exit(1);
+}
+
 newman.run({
-        collection: {
-        url: "https://api.postman.com/collections/52498897-2a596169-603f-43d2-b980-f74c235385b6"
+    collection: {
+        url: `https://api.postman.com/collections/52498897-2a596169-603f-43d2-b980-f74c235385b6?access_key=${apiKey}`
     },
-    // past collection url 
-    //If implement ci cd comment out the collection env file
-    // collection:`https://api.postman.com/collections/52498897-2a596169-603f-43d2-b980-f74c235385b6?access_key=${process.env.secretKey}`,
-      //if collection runner no need to add column enviornement
-    // Environment file
+
     environment: './EnvTestEmployee.postman_environment.json',
-    reporters: 'htmlextra',
-    iterationCount: 1,
+
+    reporters: ['cli', 'htmlextra'],
+
     reporter: {
         htmlextra: {
-            export: './Reports/report.html', // If not specified, the file will be written to `newman/` in the current working directory.
+            export: './Reports/report.html',
+            title: "API Test Report",   
+            browserTitle: "Newman Report"
         }
     }
-}, function (err) {
-    if (err) { 
-        // throw err; 
+
+}, function (err, summary) {
+    if (err) {
         console.error("Newman run failed:", err);
         process.exit(1);
     }
-    console.log('collection run complete!');
+
+    if (!summary || !summary.collection || !summary.collection.name) {
+        console.error("Collection not loaded properly");
+        process.exit(1);
+    }
+
+    console.log("Collection run complete!");
 });
