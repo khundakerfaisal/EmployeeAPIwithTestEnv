@@ -28,10 +28,10 @@ jobs:
             npm init -y
             npm install newman newman-reporter-htmlextra
         
-       - name: Run Tests and Generate HTML Report
-         env:
+      - name: Run Tests and Generate HTML Report
+        env:
             POSTMAN_API_KEY: ${{ secrets.POSTMAN_API_KEY }}
-          run: |
+        run: |
             npx newman run "https://api.postman.com/collections/52498897-2a596169-603f-43d2-b980-f74c235385b6?access_key=$POSTMAN_API_KEY" \
             -e EnvTestEmployee.postman_environment.json \
             -r cli,htmlextra \
