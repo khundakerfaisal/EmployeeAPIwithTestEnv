@@ -1,6 +1,6 @@
 const newman = require('newman');
 //If implement ci cd comment out the dot env required file
-// require('dotenv').config(); //require install dotenv package 
+require('dotenv').config(); //require install dotenv package 
 
  
 newman.run({
