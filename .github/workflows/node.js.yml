@@ -45,3 +45,38 @@ jobs:
         with:
           name: newman-html-report
           path: newman-report.html
+
+      - name: Send Email on Failure
+        if: failure()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.SMTP_EMAIL }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          subject: ❌ API Test Failed
+          body: |
+            Your API test has FAILED ❌
+            Repo: ${{ github.repository }}
+            Branch: ${{ github.ref_name }}
+            Check details: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          to: ${{ secrets.TO_EMAIL }}
+          from: ${{ secrets.SMTP_EMAIL }}
+          attachments: newman-report.html
+      - name: Send Email on Success
+        if: success()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.SMTP_EMAIL }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          subject: ✅ API Test Passed
+          body: |
+            Your API test has PASSED ✅
+            Repo: ${{ github.repository }}
+            Branch: ${{ github.ref_name }}
+            View run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          to: ${{ secrets.TO_EMAIL }}
+          from: ${{ secrets.SMTP_EMAIL }}
+          attachments: newman-report.html
